@@ -12,6 +12,7 @@ fn start_game() {
 
     let word_pool = get_words_from_file("word_pool.txt").expect("Error getting words from file");
     let word = select_word_from_pool(&word_pool);
+    let display_word = get_display_format_from_word(&word);
 }
 
 fn get_words_from_file(file_name: &str) -> std::io::Result<(Vec<String>)> {
@@ -31,6 +32,21 @@ fn get_words_from_file(file_name: &str) -> std::io::Result<(Vec<String>)> {
 fn select_word_from_pool(word_pool: &Vec<String>) -> &String {
     let word_index = rand::thread_rng().gen_range(0, word_pool.len());
     word_pool.get(word_index).unwrap()
+}
+
+fn get_display_format_from_word(word: &String) -> String {
+    let mut result = String::new();
+
+    for character in word.chars() {
+        if character == ' ' {
+            result.push(' ');
+        }
+        else {
+            result.push('-');
+        }
+    }
+
+    result
 }
 
 #[cfg(test)]
@@ -59,7 +75,14 @@ mod test {
 
         let result = select_word_from_pool(&test_pool);
 
-
         assert_eq!(result, "test element");
+    }
+
+    #[test]
+    fn test_get_display_format_from_word() {
+        let word = String::from("test word");
+        let result = get_display_format_from_word(&word);
+
+        assert_eq!(result, "---- ----");
     }
 }
