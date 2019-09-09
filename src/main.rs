@@ -3,17 +3,18 @@ use std::io::Read;
 use rand::Rng;
 
 fn main() {
-   start_game(); 
+    start_game(); 
 }
 
 
 fn start_game() {
-    println!("Start playing RustyGallows!");
+    println!("Setting up game...");
 
     let word_pool = get_words_from_file("word_pool.txt").expect("Error getting words from file");
     let word = select_word_from_pool(&word_pool);
     let display_word = get_display_format_from_word(&word);
 }
+
 
 fn get_words_from_file(file_name: &str) -> std::io::Result<(Vec<String>)> {
     let mut file = File::open(file_name)?;
@@ -29,16 +30,22 @@ fn get_words_from_file(file_name: &str) -> std::io::Result<(Vec<String>)> {
     Ok(words)    
 }
 
-fn select_word_from_pool(word_pool: &Vec<String>) -> &String {
+fn select_word_from_pool(word_pool: &Vec<String>) -> Vec<char> {
     let word_index = rand::thread_rng().gen_range(0, word_pool.len());
-    word_pool.get(word_index).unwrap()
+    let mut result: Vec<char> = Vec::new();
+
+    for character in word_pool.get(word_index).unwrap().chars() {
+        result.push(character);
+    }
+
+    result
 }
 
-fn get_display_format_from_word(word: &String) -> String {
-    let mut result = String::new();
+fn get_display_format_from_word(word: &Vec<char>) -> Vec<char> {
+    let mut result = Vec::new();
 
-    for character in word.chars() {
-        if character == ' ' {
+    for character in word {
+        if *character == ' ' {
             result.push(' ');
         }
         else {
@@ -71,18 +78,22 @@ mod test {
 
     #[test]
     fn test_select_word_from_pool() {
-        let test_pool = vec![String::from("test element")];
+        let test_pool = vec![String::from("test")];
+
+        let vec = vec!['t', 'e', 's', 't'];
 
         let result = select_word_from_pool(&test_pool);
 
-        assert_eq!(result, "test element");
+        assert_eq!(result, vec);
     }
 
     #[test]
     fn test_get_display_format_from_word() {
-        let word = String::from("test word");
+        let word = vec!['t', 'e', 's', 't'];
         let result = get_display_format_from_word(&word);
 
-        assert_eq!(result, "---- ----");
+        let val = vec!['-', '-', '-', '-',];
+
+        assert_eq!(result, val);
     }
 }
